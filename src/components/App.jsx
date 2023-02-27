@@ -4,12 +4,11 @@ import Notiflix from 'notiflix';
 import { Form } from "./Form/Form";
 import { List } from "./List/List";
 import { Filter } from "./Filter/Filter";
-import initialContacts from "./contacts.json";
 
 
 export class App extends Component {
   state = {
-    contacts: initialContacts, 
+    contacts: [], 
     filter: "",
   };  
 
@@ -43,7 +42,22 @@ export class App extends Component {
     const normalisedFilter = filter.toLocaleLowerCase();
 
     return contacts.filter(contact => contact.name.toLowerCase().includes(normalisedFilter));
-  };  
+  };
+
+  componentDidMount() {
+    const contacts = localStorage.getItem('contacts');
+    const parsedContacts = JSON.parse(contacts);
+  
+    if (parsedContacts) {
+      this.setState({ contacts: parsedContacts });
+    };    
+  };
+  
+  componentDidUpdate(prevProps, prevState) {   
+    if (this.state.contacts !== prevState.contacts) {      
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    };
+  };
 
 
   render() {
